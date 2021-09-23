@@ -13,6 +13,7 @@ export const API = 'api/v1'
 export default {
   ...user,
   ...friendly,
+// fgskagdaghsjhj
   ...group,
   ...news,
   ...sys,
