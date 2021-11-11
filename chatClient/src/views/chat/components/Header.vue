@@ -9,6 +9,7 @@
           <!-- <i class="icon-qun iconfont iconic iconic-group" v-if="currentConversation.conversationType === 'GROUP'"></i> -->
           <!-- <i class="el-icon-user-solid iconic " v-else></i> -->
         </div>
+        <iframe width="235" height="50" frameborder="0" scrolling="no" hspace="0" src="https://i.tianqi.com/?c=code&id=10"></iframe>
         <div class="header-operation">
           <span v-if="!currentConversation.isGroup">
             <el-tooltip class="item" effect="dark" content="白板协作需要良好的网络环境" placement="top">
@@ -17,10 +18,10 @@
                 class="operation-item iconfont icon-huaban"
                 @click="enterArtBoard"></i>
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="视频通话需要良好的网络环境" placement="top">
+            <!-- <el-tooltip class="item" effect="dark" content="视频通话需要良好的网络环境" placement="top">
               <i class="operation-item iconfont icon-shipin" @click="videoCall"></i>
-            </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="视频通话需要良好的网络环境" placement="top">
+            </el-tooltip> -->
+            <el-tooltip class="item" effect="dark" content="语音通话需要良好的网络环境" placement="top">
               <i class="operation-item el-icon-phone-outline" @click="audioCall"></i>
             </el-tooltip>
           </span>
@@ -37,10 +38,10 @@
 </template>
 
 <script>
-import './../../../../static/iconfont/iconfont.css'
-import settingPanel from './settingPanel'
-import { WEB_RTC_MSG_TYPE } from '@/const'
-import { mapState } from 'vuex'
+import "./../../../../static/iconfont/iconfont.css";
+import settingPanel from "./settingPanel";
+import { WEB_RTC_MSG_TYPE } from "@/const";
+import { mapState } from "vuex";
 export default {
   props: {
     currentConversation: Object,
@@ -49,95 +50,106 @@ export default {
   data() {
     return {
       showSettingPanel: false
-    }
+    };
   },
   computed: {
     userInfo() {
-      return this.$store.state.user.userInfo
+      return this.$store.state.user.userInfo;
     },
-    beizhu() { // 备注map
-      return this.userInfo.friendBeizhu || {}
+    beizhu() {
+      // 备注map
+      return this.userInfo.friendBeizhu || {};
     },
     haderTitle() {
-      const currentConversation = this.currentConversation
-      let res = ''
+      const currentConversation = this.currentConversation;
+      let res = "";
       if (currentConversation.isGroup) {
-        res = currentConversation.groupId.title + `（${currentConversation.groupId.userNum}）`
+        res =
+          currentConversation.groupId.title +
+          `（${currentConversation.groupId.userNum}）`;
       } else {
-        res = this.beizhu[currentConversation._id] ? this.beizhu[currentConversation._id] + `（${currentConversation.nickname}）` : currentConversation.nickname
+        res = this.beizhu[currentConversation._id]
+          ? this.beizhu[currentConversation._id] +
+            `（${currentConversation.nickname}）`
+          : currentConversation.nickname;
       }
-      return res
+      return res;
     },
-    ...mapState('app', {
-      isToCoArtBoard: 'isToCoArtBoard',
-      isVideoing: 'isVideoing',
-      isAudioing: 'isAudioing'
+    ...mapState("app", {
+      isToCoArtBoard: "isToCoArtBoard",
+      isVideoing: "isVideoing",
+      isAudioing: "isAudioing"
     }),
     device() {
-      return this.$store.state.device.deviceType
+      return this.$store.state.device.deviceType;
     }
   },
   methods: {
     enterArtBoard() {
-      if (this.isToCoArtBoard || this.isVideoing || this.isAudioing) return
-      this.$store.dispatch('app/SET_ISTOCOARTBOARD', true)
-      this.$eventBus.$emit('web_rtc_msg', { type: WEB_RTC_MSG_TYPE.artBoard})
+      if (this.isToCoArtBoard || this.isVideoing || this.isAudioing) return;
+      this.$store.dispatch("app/SET_ISTOCOARTBOARD", true);
+      this.$eventBus.$emit("web_rtc_msg", { type: WEB_RTC_MSG_TYPE.artBoard });
     },
     videoCall() {
-      if (this.isToCoArtBoard || this.isVideoing || this.isAudioing) return
-      this.$store.dispatch('app/SET_IS_VIDEOING', true)
-      this.$eventBus.$emit('web_rtc_msg', { type: WEB_RTC_MSG_TYPE.video})
+      if (this.isToCoArtBoard || this.isVideoing || this.isAudioing) return;
+      this.$store.dispatch("app/SET_IS_VIDEOING", true);
+      this.$eventBus.$emit("web_rtc_msg", { type: WEB_RTC_MSG_TYPE.video });
     },
     audioCall() {
-      if (this.isToCoArtBoard || this.isVideoing || this.isAudioing) return
-      this.$store.dispatch('app/SET_IS_AUDIOING', true)
-      this.$eventBus.$emit('web_rtc_msg', { type: WEB_RTC_MSG_TYPE.audio})
+      if (this.isToCoArtBoard || this.isVideoing || this.isAudioing) return;
+      this.$store.dispatch("app/SET_IS_AUDIOING", true);
+      this.$eventBus.$emit("web_rtc_msg", { type: WEB_RTC_MSG_TYPE.audio });
     },
     toggleShowSettingPanel() {
-      this.showSettingPanel = !this.showSettingPanel
+      this.showSettingPanel = !this.showSettingPanel;
     },
     watchDocumentClick() {
-      if (!this.showSettingPanel) return
-      this.toggleShowSettingPanel()
+      if (!this.showSettingPanel) return;
+      this.toggleShowSettingPanel();
     },
     setCurrentUI() {
-      this.$store.dispatch('device/SET_CURRENT_UI', 'conversation')
+      this.$store.dispatch("device/SET_CURRENT_UI", "conversation");
     }
   },
   watch: {
     currentConversation: {
       handler() {
-        this.showSettingPanel = false
-      }, immediate: true, deep: true
+        this.showSettingPanel = false;
+      },
+      immediate: true,
+      deep: true
     }
   },
   components: {
     settingPanel
   },
   mounted() {
-    document.addEventListener('click', this.watchDocumentClick)
+    document.addEventListener("click", this.watchDocumentClick);
   },
   beforeDestroy() {
-    document.removeEventListener('click', this.watchDocumentClick)
-  },
-}
+    document.removeEventListener("click", this.watchDocumentClick);
+  }
+};
 </script>
 
 <style lang="scss">
 .chat-area__header {
   position: relative;
   box-sizing: border-box;
-  height: 60px;
-  padding: 0 20px;
-  line-height: 60px;
-  border-bottom: 1px solid #cccccc;
+  height: 80px;
+  padding: 20px;
+  line-height: 40px;
+  border-bottom: 1px solid #eeeeee;
+  color: #555555;
+  font-size: 20px;
   .header-wrapper {
     display: flex;
     justify-content: space-between;
     .header-operation {
+      width: 200px;
       .operation-item {
-        font-size: 20px;
-        margin-left: 10px;
+        font-size: 25px;
+        margin-left: 30px;
         cursor: pointer;
       }
     }
@@ -160,7 +172,7 @@ export default {
 
   .roll-leave-to {
     opacity: 0;
-    transform: translateY(-30px)
+    transform: translateY(-30px);
   }
 
   .roll-enter-active,
@@ -169,4 +181,3 @@ export default {
   }
 }
 </style>
-

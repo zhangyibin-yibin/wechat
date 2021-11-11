@@ -27,8 +27,8 @@
 </template>
 
 <script>
-import messageItem from "./MessageItem"
-import { debounce } from '@/utils'
+import messageItem from "./MessageItem";
+import { debounce } from "@/utils";
 export default {
   // props: ["messagelist", "scrollbottom", "hasmore", "isloading", "useanimation", "currentConversation"],
   props: {
@@ -59,23 +59,25 @@ export default {
   },
   data() {
     return {
-      currentImgUrl: '',
+      currentImgUrl: "",
       showTopOperation: false
-    }
+    };
   },
   computed: {
     imgTypeMsgList() {
-      return (this.messagelist || []).filter(item => item.messageType === 'img')
+      return (this.messagelist || []).filter(
+        item => item.messageType === "img"
+      );
     }
   },
   methods: {
     loadMore() {
-      this.$emit('load-message', true)
+      this.$emit("load-message", true);
     },
-    handlerScroll: debounce(function () {
-      const scrollTop = this.$refs['msglist'].scrollTop
+    handlerScroll: debounce(function() {
+      const scrollTop = this.$refs["msglist"].scrollTop;
       if (scrollTop < 5) {
-        this.$emit('load-message', true)
+        this.$emit("load-message", true);
       }
     }, 500)
   },
@@ -86,28 +88,33 @@ export default {
     messagelist: {
       handler() {
         if (this.scrollbottom) {
-          this.$nextTick(() =>{
+          this.$nextTick(() => {
             setTimeout(() => {
               // this.$refs['msglist'].scrollTop = this.$refs['msglist'].scrollHeight + 200
-              const lastItem = document.querySelector('.chat-area__message-item__com:last-child')
-              lastItem && lastItem.scrollIntoView()
+              const lastItem = document.querySelector(
+                ".chat-area__message-item__com:last-child"
+              );
+              lastItem && lastItem.scrollIntoView();
               setTimeout(() => {
-                this.$refs['tips'].style.opacity = "1"
-              }, 100)
-            }, 0)
-          })
+                this.$refs["tips"].style.opacity = "1";
+              }, 100);
+            }, 0);
+          });
         }
-      }, deep: true, immediate: true
+      },
+      deep: true,
+      immediate: true
     }
-  },
+  }
 };
 </script>
 
 <style lang="scss">
-@import './../../../../static/css/animation.scss';
+@import "./../../../../static/css/animation.scss";
 .chat-area__message-list__com {
   .top-operations {
     text-align: center;
+    color: #555555;
   }
   box-sizing: border-box;
   height: 100%;
@@ -141,4 +148,3 @@ export default {
   // }
 }
 </style>
-

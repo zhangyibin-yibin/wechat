@@ -3,9 +3,7 @@
     <div class="mzone-wrapper">
       <div v-if="device === 'Mobile'" class="goback el-icon-arrow-left" @click="$router.go(-1)" />
       <div class="mzone-top">
-        <div class="carousel" :style="'backgroundImage:url(' + IMG_URL + userInfo.cover [0] + ')'">
-          
-        </div>
+        <!-- <div class="carousel" :style="'backgroundImage:url(' + IMG_URL + userInfo.cover [0] + ')'"></div> -->
         <div class="info">
           <el-avatar
             class="avatar"
@@ -17,43 +15,23 @@
               src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
             >
           </el-avatar>
-          <span class="nickname">{{userInfo.nickname}}</span>
+          <div class="nickname">
+            <router-link slot="reference" :to="`/chat/user/${userInfo._id}`" class="nickname-link">
+              {{userInfo.nickname}}
+            </router-link>
+          <i :class="'level '+ 'lv' + level"></i>
+      </div>
         </div>
       </div>
       <!-- <suck-top :top="30" parent=".mzone-page" :z-index="1004"> -->
-        <div ref="navtop" class="mzone-nav" :style="{width: navTopWidth + 'px'}">
-          <el-menu :default-active="activeTab" @select="tabSelect" class="el-menu-demo" mode="horizontal">
-            <el-menu-item index="pyq">好友动态</el-menu-item>
-            <el-menu-item index="my-mzone">我的空间</el-menu-item>
-            <el-menu-item index="blog">博客</el-menu-item>
-          </el-menu>
-        </div>
+        <!-- <div ref="navtop" class="mzone-nav" :style="{width: navTopWidth + 'px'}"> -->
+      <el-menu :default-active="activeTab" @select="tabSelect" class="el-menu-demo" mode="horizontal">
+        <el-menu-item index="pyq">好友动态</el-menu-item>
+        <el-menu-item index="blog">博客</el-menu-item>
+      </el-menu>
+        <!-- </div> -->
       <!-- </suck-top> -->
-      <div :class="device === 'Mobile' ? 'mzone-body mobile' : 'mzone-body'">
-        <!-- <div class="menulist">
-          <suck-top :top="70" parent=".mzone-page" :z-index="1004">
-            <div class="menulist" :style="{width: menulistWidth + 'px'}">
-              <el-menu
-                default-active="2"
-                class="el-menu-vertical-demo"
-              >
-                <el-menu-item index="2">
-                  <i class="el-icon-menu"></i>
-                  <span slot="title">导航二</span>
-                </el-menu-item>
-                <el-menu-item index="3" disabled>
-                  <i class="el-icon-document"></i>
-                  <span slot="title">导航三</span>
-                </el-menu-item>
-                <el-menu-item index="4">
-                  <i class="el-icon-setting"></i>
-                  <span slot="title">导航四</span>
-                </el-menu-item>
-              </el-menu>
-            </div>
-          </suck-top>
-        </div> -->
-        
+      <div class="mzone-body">       
         <div v-show="activeTab === 'pyq'" class="content">
           <send-mzone @watchsend="watchSendPyq" />
           <m-pyq
@@ -73,17 +51,18 @@
 </template>
 
 <script>
-import mPyq from '@/components/mzonePyq'
-import sendMzone from '@/components/sendMZone'
-import backTop from '@/components/backTop'
-import suckTop from '@/components/suckTop'
-import Blog from './blog'
+import mPyq from "@/components/mzonePyq";
+import sendMzone from "@/components/sendMZone";
+import backTop from "@/components/backTop";
+import suckTop from "@/components/suckTop";
+import Blog from "./blog";
+import { computedLevel } from "@/utils";
 export default {
-  name: 'MZone',
+  name: "MZone",
   data() {
     return {
       IMG_URL: process.env.IMG_URL,
-      activeTab: 'blog',
+      activeTab: "blog",
       navTopWidth: 0,
       menulistWidth: 0,
 
@@ -93,47 +72,52 @@ export default {
       pyqLoading: true, // 正在获取朋友圈
       pyqPage: 0,
       pyqPageSize: 7
-    }
+    };
   },
   computed: {
     userInfo() {
-      return this.$store.state.user.userInfo
+      return this.$store.state.user.userInfo;
     },
     device() {
-      return this.$store.state.device.deviceType
+      return this.$store.state.device.deviceType;
+    },
+    level() {
+      return computedLevel(this.userInfo.onlineTime);
     }
   },
   methods: {
     tabSelect(index) {
       // console.log(a)
-      this.activeTab = index
+      this.activeTab = index;
     },
-    watchSendPyq(newPyqItem) { // 监听用户发表新的朋友圈
-      this.myFriendPyqList = [newPyqItem, ...this.myFriendPyqList]
+    watchSendPyq(newPyqItem) {
+      // 监听用户发表新的朋友圈
+      this.myFriendPyqList = [newPyqItem, ...this.myFriendPyqList];
     },
-    getMyFriendPyq() { // 获取我的好友发表的朋友圈
-      this.pyqLoading = true
+    getMyFriendPyq() {
+      // 获取我的好友发表的朋友圈
+      this.pyqLoading = true;
       const params = {
         id: this.userInfo._id,
         page: this.pyqPage,
         pageSize: this.pyqPageSize
-      }
+      };
       this.$http.getFriendlyPyq(params).then(res => {
-        const { data, status } = res.data
+        const { data, status } = res.data;
         if (status === 2000 && res.status < 400) {
-          this.myFriendPyqList = [...this.myFriendPyqList, ...data]
-          this.pyqLoading = false
+          this.myFriendPyqList = [...this.myFriendPyqList, ...data];
+          this.pyqLoading = false;
           if (data.length < 7) {
-            this.hasMorePyq = false
+            this.hasMorePyq = false;
           } else {
-            this.hasMorePyq = true
-            this.pyqPage++
+            this.hasMorePyq = true;
+            this.pyqPage++;
           }
         }
-      })
+      });
     },
     modifyPyq(newPyqList) {
-      this.myFriendPyqList = newPyqList
+      this.myFriendPyqList = newPyqList;
     }
   },
   components: {
@@ -144,46 +128,52 @@ export default {
     Blog
   },
   mounted() {
-    const mzoneWrapper = document.querySelector('.mzone-wrapper')
+    const mzoneWrapper = document.querySelector(".mzone-wrapper");
     // const menulist = document.querySelector('.menulist')
-    const mzoneWrapperWidth = window.getComputedStyle(mzoneWrapper).width
+    const mzoneWrapperWidth = window.getComputedStyle(mzoneWrapper).width;
     // const menulistWidth = window.getComputedStyle(menulist).width
-    this.navTopWidth = parseInt(mzoneWrapperWidth)
+    this.navTopWidth = parseInt(mzoneWrapperWidth);
     // this.menulistWidth = parseInt(menulistWidth)
-  },
-}
+  }
+};
 </script>
 
 <style lang="scss" scoped>
 .mzone-page {
-  width: 100%;
-  background-color: #e9ebee;
-  height: 100%;
-  padding: 0 10px;
-  overflow-y: scroll;
+  // width: 100%;
+  // background-color: #e9ebee;
+  // height: 100%;
+  // padding: 0 10px;
+  // overflow-y: scroll;
+  position: relative;
+  height: 98%;
+  width: 70%;
+  min-width: 1000px;
+  // padding: 20px;
+  margin: 10px auto;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  background-color: #f3f2ef;
+  border-radius: 30px;
+  padding: 10px 20px;
   .mzone-wrapper {
-    .goback {
-      position: absolute;
-      left: 15px;
-      top: 10px;
-      z-index: 1007;
-      font-size: 20px;
-    }
+    // width: 100%;
+    position: relative;
     margin: 0 auto;
     .mzone-top {
-      height: 190px;
+      height: 150px;
       position: relative;
-      margin-bottom: 10px;
+      padding-top: 30px;
+      // align-items: center;
       .carousel {
-        height: 190px;
+        height: 150px;
         background-size: cover;
         background-repeat: no-repeat;
       }
       .info {
         display: flex;
         align-items: center;
-        position: absolute;
-        bottom: -10px;
+        // position: absolute;
+        // bottom: -10px;
         z-index: 999;
         padding: 0 10px;
         // height: 60px;
@@ -194,7 +184,15 @@ export default {
         .nickname {
           margin: 0 30px;
           font-size: 27px;
-          color: #ffffff;
+          color: #555;
+          .nickname-link {
+            text-decoration: none;
+            color: #222222;
+            &:hover {
+              text-decoration: underline;
+              color: #21aa93;
+            }
+          }
         }
       }
     }
@@ -223,19 +221,19 @@ export default {
         }
         .el-tabs__content {
           margin-top: 10px;
-          background: #FFF
+          background: #fff;
         }
       }
     }
     .mzone-body {
-      display: flex;
+      // display: flex;
       // justify-content: space-between;
       margin-top: 10px;
       .menulist {
         width: 20%;
       }
       .content {
-        width: 70%;
+        width: 100%;
         margin-left: 25px;
         &.blog {
           margin-left: 0;

@@ -53,39 +53,41 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { fromatTime } from "@/utils"
+import { mapState } from "vuex";
+import { fromatTime } from "@/utils";
 export default {
   props: ["searchlist"],
   data() {
     return {
       IMG_URL: process.env.IMG_URL,
-      friends: JSON.parse(window.localStorage.getItem('friends')),
+      friends: JSON.parse(window.localStorage.getItem("friends")),
       showAdditionMessage: false,
-      additionMessage: '',
+      additionMessage: "",
       seleceItem: {},
       loading: false
-    }
+    };
   },
   methods: {
     showAdditionDialog(item) {
-      this.showAdditionMessage = !this.showAdditionMessage
-      this.seleceItem = item
+      this.showAdditionMessage = !this.showAdditionMessage;
+      this.seleceItem = item;
     },
     sendApply() {
-      this.loading = true
+      this.loading = true;
       setTimeout(() => {
-        this.loading = false
-        this.showAdditionMessage = false
-        this.additionMessage = ''
-        this.$alert('验证消息发送成功！', '提示', {
-          confirmButtonText: '确定',
-          type: 'warning'
-        })
-      }, 500)
-      const validateSysUsr = this.sysUsers.filter(item => item.code === '111111')[0]
+        this.loading = false;
+        this.showAdditionMessage = false;
+        this.additionMessage = "";
+        this.$alert("验证消息发送成功！", "提示", {
+          confirmButtonText: "确定",
+          type: "warning"
+        });
+      }, 500);
+      const validateSysUsr = this.sysUsers.filter(
+        item => item.code === "111111"
+      )[0];
       const val = {
-        roomid: validateSysUsr._id + '-' + this.seleceItem._id,
+        roomid: validateSysUsr._id + "-" + this.seleceItem._id,
         senderId: this.userInfo._id,
         senderName: this.userInfo.name,
         senderNickname: this.userInfo.nickname,
@@ -95,37 +97,36 @@ export default {
         additionMessage: this.additionMessage,
         status: 0,
         validateType: 0
-      }
-      console.log(val)
-      return
-      this.$socket.emit('sendValidateMessage', val)
+      };
+      console.log(val);
+      return;
+      this.$socket.emit("sendValidateMessage", val);
     }
   },
   computed: {
-    ...mapState('app', {
-      sysUsers: 'sysUsers'
+    ...mapState("app", {
+      sysUsers: "sysUsers"
     }),
-    ...mapState('user', {
-      userInfo: 'userInfo'
+    ...mapState("user", {
+      userInfo: "userInfo"
     }),
     noMeSerchList() {
-      return this.searchlist.filter(item => item._id !== this.userInfo._id)
+      return this.searchlist.filter(item => item._id !== this.userInfo._id);
     }
-  },
-}
+  }
+};
 </script>
 
 <style lang="scss">
 .custom-search-list-com {
-  
   .wrapper {
-    border-top: 1px solid #C0C4CC;
+    border-top: 1px solid #c0c4cc;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 0;
     &:last-child {
-      border-bottom: 1px solid #C0C4CC;
+      border-bottom: 1px solid #c0c4cc;
     }
     .details {
       display: flex;
@@ -133,6 +134,7 @@ export default {
       .avatar {
         width: 100px;
         height: 100px;
+        border-radius: 50%;
       }
       .info {
         margin-left: 27px;
@@ -145,7 +147,7 @@ export default {
         }
         .nickname {
           cursor: pointer;
-          color: hsla(230, 84%, 63%, 1);
+          color: #21aa93;
           &:hover {
             text-decoration: underline;
           }

@@ -1,7 +1,7 @@
 const state = {
   sysUsers: '' || JSON.parse(window.localStorage.getItem('sysusers')),
   isToCoArtBoard: false, // 是否在白板协作
-  // isAudioOrVideo: false, // 是否正在语音通话或者视频通话
+  isAudioOrVideo: false, // 是否正在语音通话或者视频通话
   isVideoing: false,
   isAudioing: false,
   currentConversation: {}, // 当前的会话，在白板协作、音视频通话会使用

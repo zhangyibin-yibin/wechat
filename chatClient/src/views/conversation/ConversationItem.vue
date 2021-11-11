@@ -83,9 +83,9 @@
 </template>
 
 <script>
-import { formatDateToZH, arrUnique, findParentNode } from '@/utils'
-import { MSG_TYPES } from '@/const'
-import conversationMenu from './Menu'
+import { formatDateToZH, arrUnique, findParentNode } from "@/utils";
+import { MSG_TYPES } from "@/const";
+import conversationMenu from "./Menu";
 const conversationObj = {
   createDate: "",
   nickname: "",
@@ -94,23 +94,24 @@ const conversationObj = {
   id: "",
   roomid: ""
 };
-import './../../../static/iconfont/iconfont.css'
+import "./../../../static/iconfont/iconfont.css";
 export default {
   name: "ConversationItemComponent",
   props: {
     conversationInfo: {
       type: Object,
       default() {
-        return conversationObj
+        return conversationObj;
       }
     },
     currentConversation: {
       type: Object,
       default() {
-        return conversationObj
+        return conversationObj;
       }
     },
-    type: { // 定义改组件在哪里被使用，在最近会话中或者分组会话等
+    type: {
+      // 定义改组件在哪里被使用，在最近会话中或者分组会话等
       type: String
     },
     recentConversation: {
@@ -124,76 +125,98 @@ export default {
       IMG_URL: process.env.IMG_URL,
       menuTop: 0,
       menuLeft: 0
-    }
+    };
   },
   computed: {
     unreadNews() {
-      return this.$store.state.news.unreadNews
+      return this.$store.state.news.unreadNews;
     },
     lastNews() {
-      const lastNewsObj = this.conversationInfo.lastNews || {}
+      const lastNewsObj = this.conversationInfo.lastNews || {};
       const MSG_TYPE_TEXT = {
-        [MSG_TYPES.text]: lastNewsObj.message || '',
-        [MSG_TYPES.img]: '[图片]',
-        [MSG_TYPES.file]: '[文件]',
-        [MSG_TYPES.sys]: '[系统消息]',
-        [MSG_TYPES.artBoard]: '[白板协作]',
-        [MSG_TYPES.video]: '[视频通话]',
-        [MSG_TYPES.audio]: '[语音通话]',
-      }
-      return MSG_TYPE_TEXT[lastNewsObj.messageType] || ''
+        [MSG_TYPES.text]: lastNewsObj.message || "",
+        [MSG_TYPES.img]: "[图片]",
+        [MSG_TYPES.file]: "[文件]",
+        [MSG_TYPES.sys]: "[系统消息]",
+        [MSG_TYPES.artBoard]: "[白板协作]",
+        [MSG_TYPES.video]: "[视频通话]",
+        [MSG_TYPES.audio]: "[语音通话]"
+      };
+      return MSG_TYPE_TEXT[lastNewsObj.messageType] || "";
     },
     recentConversationList() {
-      return this.$store.state.app.recentConversation
+      return this.$store.state.app.recentConversation;
     },
-    onlineUserIds() { // 在线用户的id数组
-      return this.$store.state.app.onlineUser
+    onlineUserIds() {
+      // 在线用户的id数组
+      return this.$store.state.app.onlineUser;
     }
   },
   methods: {
     remove() {
-      this.isShowMenu = false
-      const recentFriendIdsStr = window.localStorage.getItem('coMessager-recentConversation-friend') || ''
-      const recentFriendIds = arrUnique(recentFriendIdsStr.split(',')).filter(item => item) // 去重
-      const index = recentFriendIds.findIndex(item => item === this.conversationInfo._id)
-      index !== -1 && recentFriendIds.splice(index, 1)
-      window.localStorage.setItem('coMessager-recentConversation-friend', recentFriendIds.join())
-      this.$store.dispatch('app/SET_RECENT_CONVERSATION', {type: 'delete', data: this.conversationInfo})
+      this.isShowMenu = false;
+      const recentFriendIdsStr =
+        window.localStorage.getItem("coMessager-recentConversation-friend") ||
+        "";
+      const recentFriendIds = arrUnique(recentFriendIdsStr.split(",")).filter(
+        item => item
+      ); // 去重
+      const index = recentFriendIds.findIndex(
+        item => item === this.conversationInfo._id
+      );
+      index !== -1 && recentFriendIds.splice(index, 1);
+      window.localStorage.setItem(
+        "coMessager-recentConversation-friend",
+        recentFriendIds.join()
+      );
+      this.$store.dispatch("app/SET_RECENT_CONVERSATION", {
+        type: "delete",
+        data: this.conversationInfo
+      });
       if (this.conversationInfo._id === this.currentConversation._id) {
-        const conversationList = this.recentConversationList.filter(item => Object.keys(item).length > 0)
-        const index = conversationList.findIndex(item => item._id === this.conversationInfo._id)
-        this.$emit('setCurrentConversation', conversationList[0] || {})
-        console.log(index, this.recentConversationList.filter(item => Object.keys(item).length > 0))
+        const conversationList = this.recentConversationList.filter(
+          item => Object.keys(item).length > 0
+        );
+        const index = conversationList.findIndex(
+          item => item._id === this.conversationInfo._id
+        );
+        this.$emit("setCurrentConversation", conversationList[0] || {});
+        console.log(
+          index,
+          this.recentConversationList.filter(
+            item => Object.keys(item).length > 0
+          )
+        );
       }
     },
     showMenu(e) {
-      this.isShowMenu = true
-      this.menuLeft = e.pageX
-      this.menuTop = e.pageY
+      this.isShowMenu = true;
+      this.menuLeft = e.pageX;
+      this.menuTop = e.pageY;
     },
     hiddenMenu() {
-      this.isShowMenu = false
+      this.isShowMenu = false;
     }
   },
   filters: {
     formatDateToZH(val) {
-      return formatDateToZH(val)
+      return formatDateToZH(val);
     }
   },
   components: {
     conversationMenu
   },
   created() {
-    document.addEventListener('click', () => {
-      this.isShowMenu = false
-    })
-    document.addEventListener('mousedown', (e) => {
-      const { button } = e
+    document.addEventListener("click", () => {
+      this.isShowMenu = false;
+    });
+    document.addEventListener("mousedown", e => {
+      const { button } = e;
       if (button === 2) {
-        this.isShowMenu = false        
+        this.isShowMenu = false;
       }
-    })
-  },
+    });
+  }
 };
 </script>
 
@@ -250,7 +273,7 @@ export default {
           height: 18px;
         }
         .bottom-item {
-          height: 13px;
+          height: 16px;
           margin-top: 4px;
         }
       }

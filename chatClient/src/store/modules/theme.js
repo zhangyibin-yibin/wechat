@@ -7,16 +7,18 @@ const localStorageManager = new LocalStorageManager()
  * @param {String} color 文字颜色 16进制
  * @param {String} bgColor 背景颜色 16进制
  */
-const _initThemeCSSVariable = (color, bgColor) => {
-  if (!colorHexReg.test(color) || !colorHexReg.test(bgColor)) {
+const _initThemeCSSVariable = (color, bgColor, dgColor) => {
+  if (!colorHexReg.test(color) || !colorHexReg.test(bgColor)||!colorHexReg.test(dgColor)) {
     return
   }
   let CSSVar = ''
   color = colorRgb(color)
   bgColor = colorRgb(bgColor)
+  dgColor = colorRgb(dgColor)
   for (let i = 1; i <= 10; i++) {
     CSSVar += `--primary-color-${i}: rgba(${color.r}, ${color.g}, ${color.b}, ${i / 10});`
     CSSVar += `--primary-bgcolor-${i}: rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, ${i / 10});`
+    CSSVar += `--primary-bgcolor-${i}: rgba(${dgColor.r}, ${dgColor.g}, ${dgColor.b}, ${i / 10});`
   }
   document.documentElement.style.cssText = CSSVar
 }
@@ -37,7 +39,9 @@ const state = {
   /**字体颜色 #000 */
   color: localStorageManager.getStr('theme-color') || '#000',
   /**背景颜色 #fff */
-  bgColor: localStorageManager.getStr('theme-bgcolor') || '#fff'
+  bgColor: localStorageManager.getStr('theme-bgcolor') || '#fff',
+  // 对话框背景颜色
+  dgColor: localStorageManager.getStr('theme-dgColor') || '#666'
 }
 
 _initThemeCSSVariable(state.color, state.bgColor)
@@ -68,6 +72,11 @@ const mutations = {
     localStorageManager.set('theme-bgcolor', value)
     state.bgColor = value
     _initThemeCSSVariable(state.color, state.bgColor)
+  },
+  setDgColor(state, value) {
+    localStorageManager.set('theme-dgcolor', value)
+    state.dgColor = value
+    _initThemeCSSVariable(state.color, state.dgColor)
   }
 }
 
@@ -89,6 +98,9 @@ const actions = {
   },
   SET_BG_COLOR({commit}, value) {
     commit('setBgColor', value)
+  },
+  SET_DG_COLOR({commit}, value) {
+    commit('setDgColor', value)
   }
 }
 

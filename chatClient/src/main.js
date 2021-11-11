@@ -4,6 +4,7 @@ import Vue from 'vue'
 import ElementUI from 'element-ui'
 import VueAMap from 'vue-amap'
 import 'element-ui/lib/theme-chalk/index.css'
+import Swiper from 'swiper'
 import VueSocketIO from 'vue-socket.io'
 import fullCalendar from 'vue-fullcalendar'
 import mavonEditor from 'mavon-editor'
@@ -21,6 +22,9 @@ import { VueAMapKey } from '@/const'
 import './../static/css/base.scss'
 import './../static/css/var.scss'
 import './../static/css/theme.scss'
+import $ from 'jquery'
+import './assets/bootstrap/css/style.min.css';
+import './assets/bootstrap/js/bootstrap.min.js';
 
 Vue.use(ElementUI)
 Vue.use(VueAMap)
@@ -38,7 +42,7 @@ VueAMap.initAMapApiLoader({
 
 // socket连接
 Vue.use(new VueSocketIO({
-  // debug: true,
+  debug: true, //可以在控制台看到socket连接和时间监听的一些信息
   connection: process.env.SOCKET_URL,
   // vuex: {
   //   store,
@@ -46,7 +50,6 @@ Vue.use(new VueSocketIO({
   //   mutationPrefix: "SOCKET_"
   // }
 }))
-
 // 注册全局指令
 Object.keys(directives).forEach(i => Vue.directive(i, directives[i]))
 
@@ -60,6 +63,7 @@ new Vue({
   el: '#app',
   router,
   store,
+  $,
   // components: { App },
   // template: '<App/>'
   render: h => h(App)

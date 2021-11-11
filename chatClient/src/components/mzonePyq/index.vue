@@ -49,8 +49,9 @@
         </div>
         <div class="info">
           <div class="read">
-            <span class="secondary-font">阅读：{{item.readCount ? item.readCount : 0}}次</span>
-          </div>
+            <!-- <img :src="item.picture.url" alt=""> -->
+            <!-- <span class="secondary-font">阅读：{{item.readCount ? item.readCount : 0}}次</span> -->
+          </div> 
           <div class="operation">
             <el-tooltip class="item" effect="dark" :content="commentTips" placement="top">
               <i
@@ -63,7 +64,7 @@
               @click="doLike(item._id, pyqIndex)"
               :style="(hasILike[item._id] || []).includes(userInfo._id) ? 'color: #c35673' : ''"
             />
-            <i class="item iconfont icon-zhuanfa farward" title="转发"></i>
+            <!-- <i class="item iconfont icon-zhuanfa farward" title="转发"></i> -->
           </div>
         </div>
         <div class="comment-like">
@@ -121,27 +122,27 @@
 </template>
 
 <script>
-import './../../../static/iconfont/iconfont.css'
-import picturePreview from '@/components/picturePreview'
-import customEmoji from '@/components/customEmoji'
-import commentList from '@/components/customCommentList'
-import pyqEdit from '@/components/mzonePyqEdit'
-import { debounce, formatDateToZH } from '@/utils'
-import { commentTips } from '@/const'
-import EmptySvg from '@/SVGComponents/empty'
-import userCard from '@/components/userCard'
+import "./../../../static/iconfont/iconfont.css";
+import picturePreview from "@/components/picturePreview";
+import customEmoji from "@/components/customEmoji";
+import commentList from "@/components/customCommentList";
+import pyqEdit from "@/components/mzonePyqEdit";
+import { debounce, formatDateToZH } from "@/utils";
+import { commentTips } from "@/const";
+import EmptySvg from "@/SVGComponents/empty";
+import userCard from "@/components/userCard";
 export default {
   props: {
     newpyqitem: {
       type: Object,
       default() {
-        return {}
+        return {};
       }
     },
     pyqListData: {
       type: Array,
       default() {
-        return []
+        return [];
       }
     },
     hasMore: {
@@ -157,83 +158,90 @@ export default {
       pageSize: 7,
       // hasMore: true,
       isLoading: false,
-      currentImgUrl: '',
+      currentImgUrl: "",
       showPicturePreview: false,
       commentsObj: {}, // 每条朋友圈的评论，key是朋友圈id,value是该朋友圈的评论
       showEmojiCom: false,
-      currentPyq: '', // 当前选择的朋友圈
-      emojiTop: '', // emoji组件的位置
-      emojiLeft: '',
+      currentPyq: "", // 当前选择的朋友圈
+      emojiTop: "", // emoji组件的位置
+      emojiLeft: "",
       showOperationListObj: {}, // 是否显示对本条朋友圈的操作列表
       commentTips,
       showEditPyq: false,
-      currentEditPyqId: '',
+      currentEditPyqId: "",
       handlerElement: null // 事件监听的DOM元素
-    }
+    };
   },
   computed: {
     userInfo() {
-      return this.$store.state.user.userInfo
+      return this.$store.state.user.userInfo;
     },
-    hasILike() { // 判断我也没有点赞
-      const pyqLikeUserIdsMap = {}
+    hasILike() {
+      // 判断我也没有点赞
+      const pyqLikeUserIdsMap = {};
       this.pyqList.forEach(item => {
-        const ids = (item.likes || []).map(item => item.authorId._id)
-        pyqLikeUserIdsMap[item._id] = ids
-      })
-      return pyqLikeUserIdsMap
+        const ids = (item.likes || []).map(item => item.authorId._id);
+        pyqLikeUserIdsMap[item._id] = ids;
+      });
+      return pyqLikeUserIdsMap;
     }
   },
   methods: {
     async deleteItemPyq(id) {
-      this.$confirm('删除后不可恢复, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(async () => {
-        const { data } = await this.$http.deletePyqItem({pyqId: id, userId: this.userInfo._id})
-        if (data.status === 2000) {
-          this.$message({
-            message: '删除成功！',
-            type: 'success'
-          })
-          const id = data.data._id
-          const newPyqList = this.pyqList.filter(item => item._id !== id)
-          this.pyqList = newPyqList
-        }
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })    
+      this.$confirm("删除后不可恢复, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       })
+        .then(async () => {
+          const { data } = await this.$http.deletePyqItem({
+            pyqId: id,
+            userId: this.userInfo._id
+          });
+          if (data.status === 2000) {
+            this.$message({
+              message: "删除成功！",
+              type: "success"
+            });
+            const id = data.data._id;
+            const newPyqList = this.pyqList.filter(item => item._id !== id);
+            this.pyqList = newPyqList;
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     },
     handleClickOperation(id) {
-      this.showOperationListObj[id] = !this.showOperationListObj[id]
+      this.showOperationListObj[id] = !this.showOperationListObj[id];
     },
     getFriendlyPyq() {
-      this.$emit('getPyq')
+      this.$emit("getPyq");
     },
     setCurrentImgUrl(url) {
-      this.currentImgUrl = url
-      this.showPicturePreview = true
+      this.currentImgUrl = url;
+      this.showPicturePreview = true;
     },
     setshowPicturePreview(flag) {
-      this.showPicturePreview = flag
+      this.showPicturePreview = flag;
     },
-    doLike: debounce(function (pyqId, index) {
+    doLike: debounce(function(pyqId, index) {
+      // console.log(this.pyqList[0].pictures[0].url);
       const params = {
         authorId: this.userInfo._id,
         pyqId
-      }
+      };
       this.$http.doLike(params).then(res => {
-        const { data } = res
+        const { data } = res;
         if (res.status < 400 && data.status === 2000) {
           this.$message({
-            message: '点赞成功！',
-            type: 'success'
-          })
-          const tmp = JSON.parse(JSON.stringify(this.pyqList))
+            message: "点赞成功！",
+            type: "success"
+          });
+          const tmp = JSON.parse(JSON.stringify(this.pyqList));
           tmp[index].likes.push({
             ...data.data[0],
             authorId: {
@@ -242,34 +250,34 @@ export default {
               photo: this.userInfo.photo,
               signature: this.signature
             }
-          })
-          this.pyqList = tmp
+          });
+          this.pyqList = tmp;
         } else if (res.status < 400 && data.status === 2004) {
           this.$message({
-            message: '你已经点过赞了',
-            type: 'warning'
-          })
+            message: "你已经点过赞了",
+            type: "warning"
+          });
         }
-      })
+      });
     }, 500),
     doComment(id, index) {
       if (!this.commentsObj[id]) {
-        return
+        return;
       }
       const params = {
         pyqId: id,
         content: this.commentsObj[id],
         authorId: this.userInfo._id
-      }
+      };
       this.$http.doComment(params).then(res => {
-        const { data } = res
+        const { data } = res;
         if (res.status < 400) {
           if (data.status === 2000) {
             this.$message({
-              message: '评论成功！',
-              type: 'success'
-            })
-            const tmp = JSON.parse(JSON.stringify(this.pyqList))
+              message: "评论成功！",
+              type: "success"
+            });
+            const tmp = JSON.parse(JSON.stringify(this.pyqList));
             tmp[index].comments.push({
               ...data.data[0],
               authorId: {
@@ -277,72 +285,76 @@ export default {
                 photo: this.userInfo.photo
               },
               reply: []
-            })
-            this.pyqList = tmp
+            });
+            this.pyqList = tmp;
           }
         }
-        this.commentsObj[id] = ''
-      })
+        this.commentsObj[id] = "";
+      });
     },
     addEmoji(val) {
-      this.commentsObj[this.currentPyq] += val
+      this.commentsObj[this.currentPyq] += val;
     },
     handlerShowEmoji(e, id) {
-      this.currentPyq = id
-      this.emojiTop = e.pageY - 100 + 'px'
-      this.emojiLeft = e.pageX - 200 + 'px'
-      this.showEmojiCom = true
+      this.currentPyq = id;
+      this.emojiTop = e.pageY - 100 + "px";
+      this.emojiLeft = e.pageX - 200 + "px";
+      this.showEmojiCom = true;
     },
-    handleDocmentScroll: debounce(function () {
-      const scrollTop = document.documentElement.scrollTop
-      const clientHeight = document.documentElement.clientHeight
-      const scrollHeight = document.documentElement.scrollHeight
+    handleDocmentScroll: debounce(function() {
+      const scrollTop = document.documentElement.scrollTop;
+      const clientHeight = document.documentElement.clientHeight;
+      const scrollHeight = document.documentElement.scrollHeight;
       if (scrollTop + clientHeight + 10 >= scrollHeight) {
         if (this.hasMore) {
-          this.getFriendlyPyq() 
+          this.getFriendlyPyq();
         }
       }
     }, 500),
     handleDocmentClick() {
-      this.showEmojiCom = false
+      this.showEmojiCom = false;
       for (const key in this.showOperationListObj) {
         if (this.showOperationListObj.hasOwnProperty(key)) {
-          this.showOperationListObj[key] = false
+          this.showOperationListObj[key] = false;
         }
       }
     },
     handleClickComment(id) {
-      const key = 'commentInp'+id
-      this.$refs[key][0].focus()
+      const key = "commentInp" + id;
+      this.$refs[key][0].focus();
     },
     handleEmojiMouseenter() {
-      this.$refs['emojiCom'] && this.$refs['emojiCom'].addEventListener('mouseleave', () => {
-        this.showEmojiCom = false
-      })
+      this.$refs["emojiCom"] &&
+        this.$refs["emojiCom"].addEventListener("mouseleave", () => {
+          this.showEmojiCom = false;
+        });
     },
-    addChildComment(pyqId, id, data) { // pyqId:朋友圈Id，id：父评论id，data：新子评论
-      const newPyq = JSON.parse(JSON.stringify(this.pyqList))
-      const pyqIndex = this.pyqList.findIndex(pyqItem => pyqItem._id === pyqId )
-      const commentIndex = this.pyqList[pyqIndex].comments.findIndex(item => item._id === id )
-      newPyq[pyqIndex].comments[commentIndex].reply.push(data)
-      this.pyqList = newPyq
+    addChildComment(pyqId, id, data) {
+      // pyqId:朋友圈Id，id：父评论id，data：新子评论
+      const newPyq = JSON.parse(JSON.stringify(this.pyqList));
+      const pyqIndex = this.pyqList.findIndex(pyqItem => pyqItem._id === pyqId);
+      const commentIndex = this.pyqList[pyqIndex].comments.findIndex(
+        item => item._id === id
+      );
+      newPyq[pyqIndex].comments[commentIndex].reply.push(data);
+      this.pyqList = newPyq;
     },
     editPyq(id) {
-      this.currentEditPyqId = id
-      this.showEditPyq = !this.showEditPyq
+      this.currentEditPyqId = id;
+      this.showEditPyq = !this.showEditPyq;
     },
     closeEditPyq() {
-      this.showEditPyq = false
+      this.showEditPyq = false;
     },
     modifyPyqItem(id, data) {
-      const newPyqList = JSON.parse(JSON.stringify(this.pyqList))
+      const newPyqList = JSON.parse(JSON.stringify(this.pyqList));
       newPyqList.forEach(item => {
         if (item._id === id) {
-          item.content = data.content
-          item.pictures = data.pictures
+          item.content = data.content;
+          item.pictures = data.pictures;
         }
-      })
-      this.pyqList = newPyqList
+      });
+      this.pyqList = newPyqList;
     }
   },
   components: {
@@ -355,45 +367,52 @@ export default {
   },
   filters: {
     formatDateToZH(val) {
-      return formatDateToZH(val)
+      return formatDateToZH(val);
     }
   },
   watch: {
     pyqListData: {
       handler(newPyqListData) {
-        if (!Array.isArray(newPyqListData)) return
-        this.pyqList = newPyqListData
+        if (!Array.isArray(newPyqListData)) return;
+        this.pyqList = newPyqListData;
         newPyqListData.forEach(item => {
-          this.$set(this.commentsObj, item._id, '')
-          this.$set(this.showOperationListObj, item._id, false)
-        })
-      }, deep: true, immediate: true
+          this.$set(this.commentsObj, item._id, "");
+          this.$set(this.showOperationListObj, item._id, false);
+        });
+      },
+      deep: true,
+      immediate: true
     },
     pyqList: {
       handler(newVal, oldVal) {
         if (newVal !== oldVal) {
-          this.$emit('modifyPyq', newVal)
+          this.$emit("modifyPyq", newVal);
         }
-      }, deep: true
+      },
+      deep: true
     }
   },
   mounted() {
-    this.getFriendlyPyq()
-    document.addEventListener('click', this.handleDocmentClick)
-    const mzonePage = document.querySelector('.mzone-page')
-    if(!mzonePage) return
-    this.handlerElement = mzonePage
-    mzonePage.addEventListener('scroll', this.handleDocmentScroll)
+    this.getFriendlyPyq();
+    document.addEventListener("click", this.handleDocmentClick);
+    const mzonePage = document.querySelector(".mzone-page");
+    if (!mzonePage) return;
+    this.handlerElement = mzonePage;
+    mzonePage.addEventListener("scroll", this.handleDocmentScroll);
   },
   beforeDestroy() {
-    document.removeEventListener('click', this.handleDocmentClick)
-    this.handlerElement && this.handlerElement.removeEventListener('scroll', this.handleDocmentScroll)    
-  },
-}
+    document.removeEventListener("click", this.handleDocmentClick);
+    this.handlerElement &&
+      this.handlerElement.removeEventListener(
+        "scroll",
+        this.handleDocmentScroll
+      );
+  }
+};
 </script>
 
 <style lang="scss" scoped>
-@import './../../../static/css/animation.scss';
+@import "./../../../static/css/animation.scss";
 .pyq-com {
   position: relative;
   min-height: 240px;
@@ -405,7 +424,7 @@ export default {
       .header {
         display: flex;
         align-items: center;
-        border-bottom: 1px solid #C0C4CC;
+        border-bottom: 1px solid #c0c4cc;
         padding: 0 0 10px;
         position: relative;
         .info {
@@ -419,7 +438,7 @@ export default {
               color: #222222;
               &:hover {
                 text-decoration: underline;
-                color: #409EFF;
+                color: #409eff;
               }
             }
           }

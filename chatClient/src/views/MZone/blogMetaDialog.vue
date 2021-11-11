@@ -7,7 +7,7 @@
           <part-title text="文章描述" />
           <el-input placeholder="请输入文章描述" type="textarea" v-model="blogDesc" />
         </div>
-        <div class="meta-item cover">
+        <!-- <div class="meta-item cover">
           <part-title text="文章封面" />
           <div class="img-content" v-show="blogCover">
             <i class="el-icon-close" title="删除封面" @click="setCover('')"></i>
@@ -20,9 +20,9 @@
               </template>
             </uploadImg>
           </div>
-        </div>
+        </div> -->
         <div class="meta-item cate-tag">
-          <part-title text="文章分类及标签" />
+          <!-- <part-title text="文章分类及标签" /> -->
           <div class="category item">
             <span
               :class="currentCate._id === item._id ? 'cate-item isactive' : 'cate-item'"
@@ -46,7 +46,7 @@
               >{{item.name}}</el-tag>
             </span>
           </div>
-          <div class="tag item">
+          <!-- <div class="tag item">
             已选标签：
             <span
               class="tag-item"
@@ -55,7 +55,7 @@
             >
               <el-tag size="small" closable @close="selectTag(item)">{{item.name}}</el-tag>
             </span>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="footer">
@@ -68,74 +68,74 @@
 </template>
 
 <script>
-import partTitle from '@/components/partTitle'
-import uploadImg from '@/components/customUploadImg'
-import { qiniu_URL } from '@/const'
+import partTitle from "@/components/partTitle";
+import uploadImg from "@/components/customUploadImg";
+import { qiniu_URL } from "@/const";
 export default {
   data() {
     return {
-      qiniuToken: '',
+      qiniuToken: "",
       categoryList: [],
       currentCate: {},
       tagList: [],
       selectedTags: [],
-      blogDesc: '',
-      blogCover: ''
-    }
+      blogDesc: "",
+      blogCover: ""
+    };
   },
   methods: {
     async getBlogCategory() {
-      const { data } = await this.$http.getBlogCategory()
+      const { data } = await this.$http.getBlogCategory();
       if (data.status === 2000) {
-        this.categoryList = data.data
-        this.currentCate = this.categoryList[0]
-        this.$emit('change', 'category', this.currentCate)
-        this.getBlogTag()
+        this.categoryList = data.data;
+        this.currentCate = this.categoryList[0];
+        this.$emit("change", "category", this.currentCate);
+        this.getBlogTag();
       }
     },
     async getBlogTag() {
-      const { data } = await this.$http.getBlogTag(this.currentCate._id)
+      const { data } = await this.$http.getBlogTag(this.currentCate._id);
       if (data.status === 2000) {
-        this.tagList = data.data
+        this.tagList = data.data;
       }
     },
     setCurrentCate(cate) {
-      this.currentCate = cate
-      this.$emit('change', 'category', this.currentCate)
-      this.getBlogTag()
+      this.currentCate = cate;
+      this.$emit("change", "category", this.currentCate);
+      this.getBlogTag();
     },
     selectTag(tagItem) {
       // const name = item
-      const selectedTags = this.selectedTags || []
-      const index = selectedTags.findIndex(item => item._id === tagItem._id)
+      const selectedTags = this.selectedTags || [];
+      const index = selectedTags.findIndex(item => item._id === tagItem._id);
       if (index !== -1) {
-        selectedTags.splice(index, 1)
+        selectedTags.splice(index, 1);
       } else {
-        selectedTags.push(tagItem)
+        selectedTags.push(tagItem);
       }
-      this.$emit('change', 'tags', this.selectedTags)
+      this.$emit("change", "tags", this.selectedTags);
     },
     setCover(cover) {
-      this.blogCover = cover
-      this.$emit('change', 'cover', this.blogCover)
+      this.blogCover = cover;
+      this.$emit("change", "cover", this.blogCover);
     },
     getCover(res) {
-      console.log(res)
-      if (res.status === 'complete') {
-        const cover = qiniu_URL + res.data.key
-        this.setCover(cover)
+      console.log(res);
+      if (res.status === "complete") {
+        const cover = qiniu_URL + res.data.key;
+        this.setCover(cover);
       }
     },
     setShow(flag) {
-      this.$emit('setShow', flag)
+      this.$emit("setShow", flag);
     },
     publish() {
-      this.$emit('publish')
+      this.$emit("publish");
     }
   },
   watch: {
     blogDesc(desc) {
-      this.$emit('change', 'desc', this.blogDesc)
+      this.$emit("change", "desc", this.blogDesc);
     }
   },
   components: {
@@ -143,21 +143,30 @@ export default {
     uploadImg
   },
   mounted() {
-    this.getBlogCategory()
+    this.getBlogCategory();
     this.$http.getQiniuToken().then(res => {
-      const { data } = res
-      this.qiniuToken = data.data
-    })
-  },
-}
+      const { data } = res;
+      this.qiniuToken = data.data;
+    });
+  }
+};
 </script>
 
 <style lang="scss">
-@import './../../../static/css/var.scss';
+@import "./../../../static/css/var.scss";
 .blog-meta-dialog-cmp {
   position: fixed;
   z-index: 2104;
-  background-color: rgba(0, 0, 0, .4);
+  background-color: rgba(0, 0, 0, 0.4);
+  // position: relative;
+  // height: 98%;
+  // width: 70%;
+  // min-width: 1000px;
+  // // padding: 20px;
+  // margin: 10px auto;
+  // box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  // background-color: #f3f2ef;
+  // border-radius: 30px;
   .dialog-content {
     width: 600px;
     padding: 20px;
@@ -208,7 +217,7 @@ export default {
             position: absolute;
             top: 0;
             right: 0;
-            background-color: rgba(0, 0, 0, .4);
+            background-color: rgba(0, 0, 0, 0.4);
             color: #fff;
             cursor: pointer;
           }

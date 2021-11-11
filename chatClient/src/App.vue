@@ -15,23 +15,23 @@
 </template>
 
 <script>
-import popUps from './PopUps'
+import popUps from "./PopUps";
 export default {
-  name: 'App',
+  name: "App",
   data() {
     return {
-      include: ['Layout'],
-      exclude: ['Login', 'NotFound']
-    }
+      include: ["Layout"],
+      exclude: ["Login", "NotFound"]
+    };
   },
   watch: {
     $route(to, from) {
-      const exclude = this.exclude
-      if (to.name === 'Login') {
-        !exclude.includes('Layout') && exclude.push('Layout')
+      const exclude = this.exclude;
+      if (to.name === "Login") {
+        !exclude.includes("Layout") && exclude.push("Layout");
       } else {
-        const index = exclude.indexOf('Layout')
-        index !== -1 && exclude.splice(index, 1)
+        const index = exclude.indexOf("Layout");
+        index !== -1 && exclude.splice(index, 1);
       }
       //如果 要 to(进入) 的页面是需要 keepAlive 缓存的，把 name push 进 include数组
       // console.log('change')
@@ -53,5 +53,5 @@ export default {
   components: {
     popUps
   }
-}
+};
 </script>

@@ -10,6 +10,7 @@
         @click="choose('face/'+item)"
       >
         <img width="80" height="80" :src="IMG_URL + 'face/' + item" alt="" srcset="">
+        
       </div>
     </div>
   </div>
@@ -21,37 +22,37 @@ export default {
     return {
       avatarList: [],
       IMG_URL: process.env.IMG_URL
-    }
+    };
   },
   computed: {
     device() {
-      return this.$store.state.device.deviceType
+      return this.$store.state.device.deviceType;
     }
   },
   methods: {
     close() {
-      this.$emit('close')
+      this.$emit("close");
     },
     choose(item) {
-      console.log('ok')
-      this.$emit('choose', item)
-      this.$emit('close')
+      console.log("ok");
+      this.$emit("choose", item);
+      this.$emit("close");
     }
   },
   mounted() {
     this.$http.getFaceImgs().then(res => {
-      console.log(res)
-      this.avatarList = res.data.data
-    })
-  },
-}
+      console.log(res);
+      this.avatarList = res.data.data;
+    });
+  }
+};
 </script>
 
 <style lang="scss">
 .avatar-choose-cmp {
   position: fixed;
   z-index: 1004;
-  background-color: rgba(0, 0, 0, .2);
+  background-color: rgba(0, 0, 0, 0.2);
   .avatar-list {
     width: 504px;
     height: 350px;
@@ -63,7 +64,7 @@ export default {
       box-sizing: border-box;
       display: inline-block;
       margin: 5px;
-      border: 1px solid #DCDFE6;
+      border: 1px solid #dcdfe6;
       cursor: pointer;
     }
   }

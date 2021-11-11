@@ -39,7 +39,7 @@
         <div class="description" v-if="searchList.length">
           一共搜索到{{searchList.length}}条结果
         </div>
-        <empty-svg  class="no-data" v-if="searchList.length === 0" width="200" height="200" />
+        <empty-svg  class="no-data" v-if="searchList.length === 0" width="400" height="400" />
         <user-list :searchlist="searchList" v-if="searchObject === 'friend'" />
         <group-list :searchlist="searchList" v-else-if="searchObject === 'group'" />
         <div class="no-more" v-if="searchList.length && !hasMore">
@@ -57,112 +57,115 @@
 </template>
 
 <script>
-import { debounce } from '@/utils'
-import { searchObjectMap, searchTypes } from '@/const'
-import userList from '@/components/customSearchList/userList'
-import groupList from '@/components/customSearchList/groupList'
-import EmptySvg from '@/SVGComponents/empty'
+import { debounce } from "@/utils";
+import { searchObjectMap, searchTypes } from "@/const";
+import userList from "@/components/customSearchList/userList";
+import groupList from "@/components/customSearchList/groupList";
+import EmptySvg from "@/SVGComponents/empty";
 export default {
   name: "Add",
   data() {
     return {
-      searchKey: '',
+      searchKey: "",
       searchObjectMap,
       searchTypes,
-      searchObject: 'friend',
-      searchType: 'code',
+      searchObject: "friend",
+      searchType: "code",
       isFetch: false,
       searchList: [],
       hasMore: true,
       pageSize: 7,
       page: 0
-    }
+    };
   },
   methods: {
     async fetchUser(params, loadMore) {
       try {
-        const { data } = await this.$http.preFetchUser(params)
+        const { data } = await this.$http.preFetchUser(params);
         if (data.status === 2000) {
-          const { data: userList } = data
+          const { data: userList } = data;
           if (loadMore) {
-            this.searchList = [...this.searchList, ...userList]
+            this.searchList = [...this.searchList, ...userList];
           } else {
-            this.searchList = userList
+            this.searchList = userList;
           }
           if (userList.length < 7) {
-            this.hasMore = false
+            this.hasMore = false;
           } else {
-            this.hasMore = true
+            this.hasMore = true;
           }
         }
       } catch (error) {
-        
       } finally {
-        this.isFetch = false
+        this.isFetch = false;
       }
     },
-    async fetchGroup (params, loadMore) {
+    async fetchGroup(params, loadMore) {
       try {
-        const { data } = await this.$http.preFetchGroup(params)
+        const { data } = await this.$http.preFetchGroup(params);
         if (data.status === 2000) {
-          const { data: groupList } = data
+          const { data: groupList } = data;
           groupList.forEach(item => {
-            item.isGroup = true
-          })
+            item.isGroup = true;
+          });
           if (loadMore) {
-            this.searchList = [...this.searchList, ...groupList]
+            this.searchList = [...this.searchList, ...groupList];
           } else {
-            this.searchList = groupList
+            this.searchList = groupList;
           }
           if (groupList.length < 7) {
-            this.hasMore = false
+            this.hasMore = false;
           } else {
-            this.hasMore = true
+            this.hasMore = true;
           }
         }
       } catch (error) {
-        
       } finally {
-        this.isFetch = false
+        this.isFetch = false;
       }
     },
     handleTagClose() {
-      this.searchKey = ''
-      this.fetch()
+      this.searchKey = "";
+      this.fetch();
     },
     fetch(loadMore = false, initPage = false) {
       if (!this.searchKey) {
-        this.isFetch = true
+        this.isFetch = true;
         setTimeout(() => {
-          this.searchList = []
-          this.isFetch = false
-        }, 500)
-        return
+          this.searchList = [];
+          this.isFetch = false;
+        }, 500);
+        return;
       }
       if (initPage) {
-        this.page = 0
-        this.hasMore = true
+        this.page = 0;
+        this.hasMore = true;
       }
-      this.isFetch = true
-      const params = {type: this.searchType, q: this.searchKey, pageSize: this.pageSize, page: this.page}
-      if (this.searchObject === 'friend') {
-        this.fetchUser(params, loadMore)        
-      } else if (this.searchObject === 'group') {
-        this.fetchGroup(params, loadMore)
+      this.isFetch = true;
+      const params = {
+        type: this.searchType,
+        q: this.searchKey,
+        pageSize: this.pageSize,
+        page: this.page
+      };
+      if (this.searchObject === "friend") {
+        this.fetchUser(params, loadMore);
+      } else if (this.searchObject === "group") {
+        this.fetchGroup(params, loadMore);
       }
     },
-    keyWordChange: debounce(function () {
-      this.fetch(false)
+    keyWordChange: debounce(function() {
+      this.fetch(false);
     }, 500),
     hanlerScroll: debounce(function() {
-      const addPage = document.querySelector('.add-page')
-      const scrollTop = addPage.scrollTop
-      const clientHeight = addPage.clientHeight
-      const scrollHeight = addPage.scrollHeight
+      const addPage = document.querySelector(".add-page");
+      const scrollTop = addPage.scrollTop;
+      const clientHeight = addPage.clientHeight;
+      const scrollHeight = addPage.scrollHeight;
       if (scrollTop + clientHeight + 10 >= scrollHeight) {
-        if(this.hasMore){ 
-          this.page++
-          this.fetch(true)
+        if (this.hasMore) {
+          this.page++;
+          this.fetch(true);
         }
       }
     }, 500)
@@ -173,19 +176,29 @@ export default {
     EmptySvg
   },
   mounted() {
-    const addPage = document.querySelector('.add-page')
-    addPage.addEventListener('scroll', this.hanlerScroll)
+    const addPage = document.querySelector(".add-page");
+    addPage.addEventListener("scroll", this.hanlerScroll);
   }
-}
+};
 </script>
 
 <style lang="scss">
 .add-page {
-  width: 815px;
-  height: 100%;
   padding: 10px 0;
   overflow-y: scroll;
   // margin: 0 auto;
+  position: relative;
+  height: 98%;
+  width: 70%;
+  min-width: 1000px;
+  padding: 20px;
+  margin: 10px auto;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  background-color: #f3f2ef;
+  border-radius: 30px;
+  // display: flex;
+  // justify-content: space-around;
+  // padding-top: 100px;
   .header {
     .search-area {
       display: flex;
@@ -200,8 +213,8 @@ export default {
       position: relative;
       background-color: #fff;
       border-radius: 3px;
-      min-height: 250px;
-      width: 600px;
+      min-height: 450px;
+      width: 100%;
       padding: 10px;
       .description {
         margin-bottom: 10px;
@@ -210,7 +223,7 @@ export default {
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%)
+        transform: translate(-50%, -50%);
       }
       .no-more {
         margin-top: 10px;

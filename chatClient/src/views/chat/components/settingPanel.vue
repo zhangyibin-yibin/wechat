@@ -25,55 +25,67 @@
 </template>
 
 <script>
-import { conversationTypes } from '@/const'
+import { conversationTypes } from "@/const";
 export default {
-  props: ['currentConversation'],
+  props: ["currentConversation"],
   data() {
     return {
       conversationTypes,
-      newBeizhu: ''
-    }
+      newBeizhu: ""
+    };
   },
   computed: {
     userInfo() {
-      return this.$store.state.user.userInfo
+      return this.$store.state.user.userInfo;
     }
   },
   methods: {
     showFenzu() {
-      this.$eventBus.$emit('toggleFenzuModal', {
+      this.$eventBus.$emit("toggleFenzuModal", {
         show: true,
         data: {
           currentConversation: this.currentConversation
         }
-      })
+      });
     },
     showBeizhu() {
-      this.$eventBus.$emit('toggleBeizhuModal', {
+      this.$eventBus.$emit("toggleBeizhuModal", {
         show: true,
         data: {
           currentConversation: this.currentConversation
         }
-      })
+      });
     }
   }
-}
+};
 </script>
 
 <style lang="scss">
 .setting-panel-cmp {
-  height: 100%;
-  background-color: #fff;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #f3f2ef;
+  border-radius: 10px;
+  width: 100px;
   .operation-list {
-    height: 100%;
+    // height: 100%;
     text-align: center;
     display: flex;
     flex-direction: column;
     .oper-item {
-      line-height: 20px;
-      margin-top: 10px;
+      color: #555555;
+      font-size: 16px;
+      padding: 10px 0;
+      line-height: 25px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      // margin-top: 10px;
+    }
+    .oper-item:hover {
+      background-color: #21aa93;
+      color: #fff;
     }
   }
 }
 </style>
-

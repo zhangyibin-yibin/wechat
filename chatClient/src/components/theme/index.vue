@@ -13,7 +13,7 @@
           <p class="title">毛玻璃效果模糊度（{{blur}}）</p>
           <el-slider v-model="blur" :max="100" @change="blurChange"></el-slider>
         </div>
-        <div class="theme-item">
+        <!-- <div class="theme-item">
           <p class="title">背景图片</p>
           <el-radio-group v-model="bgImg" size="small" @change="bgImgChange">
             <el-radio label="abstract" border>抽象</el-radio>
@@ -31,7 +31,7 @@
             </div>
             <img v-show="bgImg !== 'custom'" :src="systemPictureMap[bgImg]" alt="" srcset="" width="200" height="110" />
           </div>
-        </div>
+        </div> -->
         <div class="theme-item notify-sound">
           <p class="title">
             提示音设置
@@ -69,129 +69,141 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { localImgToBase64 } from '@/utils'
-import colorPick from '@/components/colorPick'
-import { connect } from 'tls';
+import { mapState } from "vuex";
+import { localImgToBase64 } from "@/utils";
+import colorPick from "@/components/colorPick";
+import { connect } from "tls";
 const notifySoundMap = {
-  default: require('./../../../static/audio/default.mp3'),
-  apple: require('./../../../static/audio/apple.mp3'),
-  pcqq: require('./../../../static/audio/pcqq.mp3'),
-  momo: require('./../../../static/audio/momo.mp3'),
-  huaji: require('./../../../static/audio/huaji.mp3'),
-  mobileqq: require('./../../../static/audio/mobileqq.mp3'),
-  none: ''
-}
+  default: require("./../../../static/audio/default.mp3"),
+  apple: require("./../../../static/audio/apple.mp3"),
+  pcqq: require("./../../../static/audio/pcqq.mp3"),
+  momo: require("./../../../static/audio/momo.mp3"),
+  huaji: require("./../../../static/audio/huaji.mp3"),
+  mobileqq: require("./../../../static/audio/mobileqq.mp3"),
+  none: ""
+};
 const systemPictureMap = {
-  abstract: require('./../../../static/image/theme/abstract.jpg'),
-  city: require('./../../../static/image/theme/city.jpg'),
-  ocean: require('./../../../static/image/theme/ocean.jpg')
-}
-const localBase64 = (window.localStorage.getItem('theme-bgimg') || '').includes('base64') ? window.localStorage.getItem('theme-bgimg') : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXMAAADPAQMAAAA9C6NrAAAAAXNSR0IArs4c6QAAAANQTFRFyb2Z4bxrAAAAACBJREFUaN7twTEBAAAAwqD1T20MH6AAAAAAAAAAAADgbybQAAFm0AbzAAAAAElFTkSuQmCC'
-let isPlaying = false
+  abstract: require("./../../../static/image/theme/abstract.jpg"),
+  city: require("./../../../static/image/theme/city.jpg"),
+  ocean: require("./../../../static/image/theme/ocean.jpg")
+};
+const localBase64 = (window.localStorage.getItem("theme-bgimg") || "").includes(
+  "base64"
+)
+  ? window.localStorage.getItem("theme-bgimg")
+  : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXMAAADPAQMAAAA9C6NrAAAAAXNSR0IArs4c6QAAAANQTFRFyb2Z4bxrAAAAACBJREFUaN7twTEBAAAAwqD1T20MH6AAAAAAAAAAAADgbybQAAFm0AbzAAAAAElFTkSuQmCC";
+let isPlaying = false;
 export default {
   data() {
     return {
       opacity: 0,
       blur: 0,
-      bgImg: '',
+      bgImg: "",
       isNotifySound: false, // 是否开启提示音
-      notifySound: '',
-      systemPictureMap: {...systemPictureMap},
+      notifySound: "",
+      systemPictureMap: { ...systemPictureMap },
       customBgImgBase64: localBase64,
-      color: '', // 字体颜色
-      bgColor: ''
-    }
+      color: "", // 字体颜色
+      bgColor: ""
+    };
   },
   computed: {
     device() {
-      return this.$store.state.device.deviceType
+      return this.$store.state.device.deviceType;
     }
   },
   methods: {
     setShowTheme(flag) {
-      this.$emit('setShowTheme', flag)
+      this.$emit("setShowTheme", flag);
     },
     opacityChange(e) {
-      this.$store.dispatch('theme/SET_OPACITY', e)
+      this.$store.dispatch("theme/SET_OPACITY", e);
     },
     blurChange(e) {
-      this.$store.dispatch('theme/SET_BLUR', e)
+      this.$store.dispatch("theme/SET_BLUR", e);
     },
     bgImgChange(e) {
-      if (e === 'custom' || e === 'customImg') return
-      this.$store.dispatch('theme/SET_BG_IMG', e)
+      if (e === "custom" || e === "customImg") return;
+      this.$store.dispatch("theme/SET_BG_IMG", e);
     },
     customBgImg(e) {
-      localImgToBase64(e.target).then(res => {
-        this.customBgImgBase64 = res
-        this.$store.dispatch('theme/SET_BG_IMG', res)
-      }).catch(err => {
-        this.$message.error(err)
-      })
+      localImgToBase64(e.target)
+        .then(res => {
+          this.customBgImgBase64 = res;
+          this.$store.dispatch("theme/SET_BG_IMG", res);
+        })
+        .catch(err => {
+          this.$message.error(err);
+        });
     },
     notifySoundChange(e) {
-      this.$store.dispatch('theme/SET_NOTIFY_SOUND', e)
-      this.playNotifySound()
+      this.$store.dispatch("theme/SET_NOTIFY_SOUND", e);
+      this.playNotifySound();
     },
     /**开启提示音切换 */
     notifySoundToggle(e) {
       if (e) {
-        this.notifySound = 'default'
-        this.$store.dispatch('theme/SET_NOTIFY_SOUND', 'default')
-        this.playNotifySound()
+        this.notifySound = "default";
+        this.$store.dispatch("theme/SET_NOTIFY_SOUND", "default");
+        this.playNotifySound();
       } else {
-        this.notifySound = ''
-        this.$store.dispatch('theme/SET_NOTIFY_SOUND', 'none')
-        this.playNotifySound()
+        this.notifySound = "";
+        this.$store.dispatch("theme/SET_NOTIFY_SOUND", "none");
+        this.playNotifySound();
       }
-
     },
     playNotifySound() {
-      if (isPlaying) return
-      isPlaying = true
-      const audio = document.createElement('audio')
-      const source = document.createElement('source')
+      if (isPlaying) return;
+      isPlaying = true;
+      const audio = document.createElement("audio");
+      const source = document.createElement("source");
       audio.volume = 0.6;
-      source.setAttribute('type', 'audio/mp3');
-      source.setAttribute('src', notifySoundMap[this.notifySound]);
+      source.setAttribute("type", "audio/mp3");
+      source.setAttribute("src", notifySoundMap[this.notifySound]);
       audio.appendChild(source);
       document.body.appendChild(audio);
       audio.play().then(res => {
-        isPlaying = false
-      })
+        isPlaying = false;
+      });
     },
     colorChange(color) {
-      this.color = color
-      this.$store.dispatch('theme/SET_COLOR', color)
+      this.color = color;
+      this.$store.dispatch("theme/SET_COLOR", color);
     },
     bgColorChange(color) {
-      this.bgColor = color
-      this.$store.dispatch('theme/SET_BG_COLOR', color)
+      this.bgColor = color;
+      this.$store.dispatch("theme/SET_BG_COLOR", color);
     }
   },
   components: {
     colorPick
   },
   created() {
-    const { opacity, blur, bgImg, notifySound, color, bgColor } = this.$store.state.theme
-    this.opacity = parseFloat(opacity)
-    this.blur = parseInt(blur)
-    this.bgImg = (bgImg || '').includes('base64') ? "custom" : bgImg
-    this.notifySound = notifySound
-    this.isNotifySound = notifySound !== 'none'
-    console.log('color', color, 'bgColor', bgColor)
-    this.color = color
-    this.bgColor = bgColor
-  },
-}
+    const {
+      opacity,
+      blur,
+      bgImg,
+      notifySound,
+      color,
+      bgColor
+    } = this.$store.state.theme;
+    this.opacity = parseFloat(opacity);
+    this.blur = parseInt(blur);
+    this.bgImg = (bgImg || "").includes("base64") ? "custom" : bgImg;
+    this.notifySound = notifySound;
+    this.isNotifySound = notifySound !== "none";
+    console.log("color", color, "bgColor", bgColor);
+    this.color = color;
+    this.bgColor = bgColor;
+  }
+};
 </script>
 
 <style lang="scss">
 .theme-choose-cmp {
   position: fixed;
   z-index: 1020;
-  background-color: rgba(0, 0, 0, .3);
+  background-color: rgba(0, 0, 0, 0.3);
   .theme-choose-cmp-container {
     width: 450px;
     .theme-list {
@@ -205,6 +217,9 @@ export default {
         margin-top: 15px;
         .title {
           margin: 0 0 5px 0;
+        }
+        .el-input-group__prepend {
+          height: 15px;
         }
         .el-radio-group {
           margin-top: 15px;

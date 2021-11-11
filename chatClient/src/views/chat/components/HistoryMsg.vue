@@ -38,7 +38,7 @@
         </div>
       </div>
       <div class="no-data hor-ver-center" v-if="!msgList.length">
-        <empty-svg width="200" height="200" />
+        <empty-svg width="400" height="400" />
         <p style="text-align: center">没有数据~</p>
       </div>
     </div>
@@ -57,14 +57,14 @@
 </template>
 
 <script>
-import msgItem from './HistoryMsgItem'
-import emptySvg from '@/SVGComponents/empty'
-import { debounce } from '@/utils'
+import msgItem from "./HistoryMsgItem";
+import emptySvg from "@/SVGComponents/empty";
+import { debounce } from "@/utils";
 const typeTextToValue = {
-  '全部': 'all',
-  '图片': 'img',
-  '文件': 'file'
-}
+  全部: "all",
+  图片: "img",
+  文件: "file"
+};
 export default {
   props: {
     currentConversation: {
@@ -74,31 +74,31 @@ export default {
   data() {
     return {
       msgList: [],
-      searchType: '全部',
-      searchWord: '',
-      searchDate: '',
+      searchType: "全部",
+      searchWord: "",
+      searchDate: "",
       page: 1,
       pageSize: 10,
       total: 0,
       isLoading: false
-    }
+    };
   },
   computed: {
     device() {
-      return this.$store.state.device.deviceType
+      return this.$store.state.device.deviceType;
     },
     paginationArgs() {
-      if (this.device === 'Mobile') {
-        return 'total, sizes, pager'
+      if (this.device === "Mobile") {
+        return "total, sizes, pager";
       } else {
-        return 'total, sizes, prev, pager, next, jumper'
+        return "total, sizes, prev, pager, next, jumper";
       }
     }
   },
   methods: {
     getHistoryMsg() {
-      if(this.isLoading) return
-      this.isLoading = true
+      if (this.isLoading) return;
+      this.isLoading = true;
       const params = {
         roomid: this.currentConversation.roomid,
         type: typeTextToValue[this.searchType],
@@ -106,34 +106,36 @@ export default {
         date: this.searchDate,
         page: this.page - 1,
         pageSize: this.pageSize
-      }
-      const fetch = this.currentConversation.isGroup ? this.$http.getGroupHistoryMsg : this.$http.getHistoryMsg
+      };
+      const fetch = this.currentConversation.isGroup
+        ? this.$http.getGroupHistoryMsg
+        : this.$http.getHistoryMsg;
       fetch(params).then(res => {
-        console.log('历史消息', res)
-        this.msgList = res.data.data.data
-        this.total = res.data.data.total
-        this.isLoading = false
-      })
+        console.log("历史消息", res);
+        this.msgList = res.data.data.data;
+        this.total = res.data.data.total;
+        this.isLoading = false;
+      });
     },
     searchTypeChange() {
-      this.page = 1
-      this.getHistoryMsg()
+      this.page = 1;
+      this.getHistoryMsg();
     },
-    searchWordChange: debounce(function () {
-      this.page = 1
-      this.getHistoryMsg()
+    searchWordChange: debounce(function() {
+      this.page = 1;
+      this.getHistoryMsg();
     }, 500),
     searchDateChange() {
-      this.page = 1
-      this.getHistoryMsg()
+      this.page = 1;
+      this.getHistoryMsg();
     },
     handleSizeChange(pageSize) {
-      this.pageSize = pageSize
-      this.getHistoryMsg()
+      this.pageSize = pageSize;
+      this.getHistoryMsg();
     },
     handleCurrentChange(currentPage) {
-      this.page = currentPage
-      this.getHistoryMsg()
+      this.page = currentPage;
+      this.getHistoryMsg();
     }
   },
   components: {
@@ -141,9 +143,9 @@ export default {
     emptySvg
   },
   mounted() {
-    this.getHistoryMsg()
-  },
-}
+    this.getHistoryMsg();
+  }
+};
 </script>
 
 <style lang="scss">
@@ -159,6 +161,12 @@ export default {
     justify-content: space-between;
     align-items: center;
     // flex-wrap: wrap;
+    .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+      background-color: #21aa93;
+    }
+    .el-radio-button__inner:hover {
+      color: #21aa93;
+    }
     .search {
       flex: 1;
       margin: 0 5px;
@@ -173,7 +181,6 @@ export default {
       overflow: hidden;
       .el-date-editor.el-input {
         width: 40px;
-        
         // .el-input {
         //   display: none;
         // }

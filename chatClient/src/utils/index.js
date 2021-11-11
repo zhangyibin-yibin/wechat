@@ -97,6 +97,19 @@ export function formatDate(time, type = 'YYYY-MM-DD') { //
   }
 }
 
+export function formatting(time){
+  var fromatTime = new Date(time).getTime();
+  var time = new Date(fromatTime);
+  var y = time.getFullYear();
+  var m = time.getMonth()+1;
+  var d = time.getDate();
+  var h = time.getHours();
+  var mm = time.getMinutes();
+  var s = time.getSeconds();
+  var date = y+'-'+(m<10?'0'+m:m) +'-'+(d<10?'0'+d:d) +' '+(h<10?'0'+h:h) +':'+(mm<10?'0'+mm:mm) +':'+(s<10?'0'+s:s);
+  return date;
+}
+
 /**
  * 将时间转化为中文的形式：昨天 12：12，12月12日 12：12
  * @param {String | Number} date 

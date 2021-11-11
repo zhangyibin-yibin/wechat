@@ -1,8 +1,8 @@
 <template>
   <div class="copyright-cmp">
-    <p class="copyright-item">Copyright©2019-{{endTime}}</p>
-    <p class="copyright-item">作者：chenchao</p>
-    <p class="copyright-item">联系我：cAuth1218@163.com</p>
+    <p class="copyright-item">作者：张益斌</p>
+    <p class="copyright-item">专业：2018级网络工程</p>
+    <p class="copyright-item">指导老师：张小集</p>
   </div>
 </template>
 
@@ -10,22 +10,22 @@
 export default {
   data() {
     return {
-      endTime: new Date().getFullYear()
-    }
-  },
-}
+      endTime: new Date()
+    };
+  }
+};
 </script>
 
 <style lang="scss">
 .copyright-cmp {
   position: fixed;
-  bottom: 40px;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
   .copyright-item {
     margin: 0 0 5px;
-    color: #ffffff;
+    color: #fff;
     font-size: 14px;
   }
 }

@@ -9,9 +9,9 @@ const userSchema = new Schema({
   signature: { type: String, default: '' },
   nickname: { type: String, default: ''},
   email: { type: String, default: '' },
-  province: { type: Object, default: {name: "四川省", value: "510000"} }, // 省
-  city: { type: Object, default: {name: "成都市", value: "510100"} }, // 市
-  town: { type: Object, default: {name: "龙泉驿区", value: "510112"} }, // 县
+  province: { type: Object, default: {name: "福建省", value: "350000"} }, // 省
+  city: { type: Object, default: {name: "福州市", value: "350000"} }, // 市
+  town: { type: Object, default: {name: "福清市", value: "350300"} }, // 县
   sex: { type: String, default: '3' }, // 0 男 1 女 3 保密
   bubble: { type: String, default: 'vchat' }, // 气泡
   chatColor: { type: String, default: '#ffffff' }, // 聊天文字颜色

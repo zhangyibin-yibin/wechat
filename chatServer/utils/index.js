@@ -71,9 +71,9 @@ function mapArrIncludesItem(arr, id) {
 
 // 根据用户在线时间计算用户等级
 function computedLevel(onlineTime) {
-  const toHour = onlineTime / 1000 / 60 /60
+  const toHour = onlineTime / 1000 / 60 /60 / 24
   const res = Math.ceil(toHour)
-  return res > 8 ? 8 : res
+  return res
 }
 
 const todayAndTomorrow = (date) => {

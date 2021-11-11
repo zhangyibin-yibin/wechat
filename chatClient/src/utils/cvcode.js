@@ -15,7 +15,7 @@ export function createCanvas(value, dom, imgUrl, loadedCb) {
     ctx.fillStyle = pattern;//填充绘画的颜色
     ctx.fillRect(0,0,canvas.width,canvas.height);
     ctx.textAlign = 'center';
-    ctx.fillStyle = '	#DC143C';
+    ctx.fillStyle = 'green';
     ctx.font = '26px Roboto Slab';
     ctx.setTransform (1, -0.12, 0.2, 1, 0, 0);
     ctx.fillText(canvasStr, x, 40);

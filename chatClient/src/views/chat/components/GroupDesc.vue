@@ -12,23 +12,23 @@
 </template>
 
 <script>
-import GroupUserList from '@/components/customGroupUserList'
+import GroupUserList from "@/components/customGroupUserList";
 export default {
   name: "GroupDescComponent",
   props: ["currentConversation"],
   data() {
     return {
       groupMembers: []
-    }
+    };
   },
   methods: {
     async fetchGroupInfo() {
-      if (this.currentConversation.conversationType === 'GROUP') {
-        const id = this.currentConversation.groupId._id
-        const { data } = await this.$http.getGroupInfo({id})
-        const { data: groupInfo, status } = data
+      if (this.currentConversation.conversationType === "GROUP") {
+        const id = this.currentConversation.groupId._id;
+        const { data } = await this.$http.getGroupInfo({ id });
+        const { data: groupInfo, status } = data;
         if (status === 2000) {
-          this.groupMembers = groupInfo.users
+          this.groupMembers = groupInfo.users;
         }
       }
     }
@@ -37,19 +37,20 @@ export default {
     GroupUserList
   },
   created() {
-    this.fetchGroupInfo()
-  },
-}
+    this.fetchGroupInfo();
+  }
+};
 </script>
 
 <style lang="scss">
 .group-desc-com {
   height: 100%;
   width: 100%;
-  border-left: 1px solid #cccccc;
+  border-left: 1px solid #eee;
   .notice {
     height: 50%;
-    border-bottom: 1px solid #cccccc;
+    border-bottom: 1px solid #eee;
+    padding: 5px;
   }
   .member {
     height: 50%;

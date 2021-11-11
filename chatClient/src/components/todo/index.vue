@@ -1,50 +1,63 @@
 <template>
   <div class="todo-cmp" @click="goSchedule" title="前往日程">
     <i class="el-icon-circle-check" style="fontSize: 20px"></i>
-    <span class="text">今日待办 <span class="">:</span> {{todos.length}}</span>
+    <span class="text" @click="findTodayTodo()">日程管理</span>
   </div>
 </template>
 
 <script>
-import { fromatTime } from '@/utils'
+import { fromatTime, formatting } from "@/utils";
 export default {
   data() {
     return {
       todos: []
-    }
+    };
   },
   methods: {
     goSchedule() {
-      this.$router.push({path: '/chat/schedule'})
+      this.$router.push({ path: "/chat/schedule" });
     },
     findTodayTodo() {
-      const allTodos = JSON.parse(window.localStorage.getItem('todo')) || []
-      const todayTodos = allTodos.map(item => {
-        if (!item.end || new Date(item.end) === new Date(item.start)) {
-          if (fromatTime(new Date(item.start), false) === fromatTime(new Date(), false)) {
-            item.start = fromatTime(new Date(item.start), false)
-            item.end ? item.end = fromatTime(new Date(item.end), false) : ''
-            return item
+      const allTodos = JSON.parse(window.localStorage.getItem("todo")) || [];
+      console.log(allTodos);
+      const todayTodos = allTodos
+        .map(item => {
+          if (!item.end || new Date(item.end) === new Date(item.start)) {
+            if (
+              formatting(new Date(item.start), false) ===
+              formatting(new Date(), false)
+            ) {
+              item.start = formatting(new Date(item.start), false);
+              item.end
+                ? (item.end = formatting(new Date(item.end), false))
+                : "";
+              return item;
+            }
+          } else if (new Date(item.end) > new Date(item.start)) {
+            if (
+              formatting(new Date(item.start), false) <=
+                formatting(new Date(), false) &&
+              formatting(new Date(item.end), false) >=
+                formatting(new Date(), false)
+            ) {
+              item.start = formatting(new Date(item.start), false);
+              item.end = formatting(new Date(item.end), false);
+              return item;
+            }
           }
-        } else if (new Date(item.end) > new Date(item.start)) {
-          if (fromatTime(new Date(item.start), false) <= fromatTime(new Date(), false) && fromatTime(new Date(item.end), false) >= fromatTime(new Date(), false)) {
-            item.start = fromatTime(new Date(item.start), false)
-            item.end = fromatTime(new Date(item.end), false)
-            return item
-          }
-        }
-      }).filter(item => item)
-      this.todos = todayTodos
+        })
+        .filter(item => item);
+      this.todos = todayTodos;
     }
   },
   mounted() {
-    this.findTodayTodo()
-  },
-}
+    this.findTodayTodo();
+  }
+};
 </script>
 
 <style lang="scss">
-@import './../../../static/css/var.scss';
+@import "./../../../static/css/var.scss";
 .todo-cmp {
   display: flex;
   align-items: center;

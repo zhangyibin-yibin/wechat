@@ -27,89 +27,93 @@
 </template>
 
 <script>
-import { conversationTypes } from '@/const'
-import { saveMyGroupToLocalStorage } from '@/utils'
-import conversationItem from './ConversationItem'
+import { conversationTypes } from "@/const";
+import { saveMyGroupToLocalStorage } from "@/utils";
+import conversationItem from "./ConversationItem";
 export default {
-  props: ['currentConversation', 'setCurrentConversation'],
+  props: ["currentConversation", "setCurrentConversation"],
   data() {
     return {
       conversationList: [],
-      activeFenzu: '',
+      activeFenzu: "",
       groupCategory: [
-        {id: 0, category: 'myHolderGroup', text: '我创建的群聊'},
-        {id: 1, category: 'myManagerGroup', text: '我管理的群聊'},
-        {id: 2, category: 'myJoinGroup', text: '我加入的群聊'}
+        { id: 0, category: "myHolderGroup", text: "我创建的群聊" },
+        { id: 1, category: "myManagerGroup", text: "我管理的群聊" },
+        { id: 2, category: "myJoinGroup", text: "我加入的群聊" }
       ]
-    }
+    };
   },
   computed: {
     userInfo() {
-      return this.$store.state.user.userInfo
+      return this.$store.state.user.userInfo;
     },
     myHolderGroup() {
-      return this.conversationList.filter(item => item.holder)
+      return this.conversationList.filter(item => item.holder);
     },
     myManagerGroup() {
-      return this.conversationList.filter(item => item.manager)
+      return this.conversationList.filter(item => item.manager);
     },
     myJoinGroup() {
-      return this.conversationList.filter(item => !item.holder && !item.manager)
+      return this.conversationList.filter(
+        item => !item.holder && !item.manager
+      );
     },
     groupCategoryMap() {
       return {
         myHolderGroup: this.myHolderGroup,
         myManagerGroup: this.myManagerGroup,
         myJoinGroup: this.myJoinGroup
-      }
+      };
     }
   },
   methods: {
     async getMyGroup() {
-      const userName = this.userInfo.name
-      const { data, status } = await this.$http.getMyGroup({userName})
-      if (data.status === 2000 && (100 <= status <= 400)) {
-        const { data: groupList } = data
+      const userName = this.userInfo.name;
+      const { data, status } = await this.$http.getMyGroup({ userName });
+      if (data.status === 2000 && 100 <= status <= 400) {
+        const { data: groupList } = data;
         groupList.forEach(item => {
-          item.conversationType = conversationTypes.group
-          item.isGroup = true
-          item.roomid = item.groupId._id
-        })
-        this.conversationList = groupList
-        this.$store.dispatch('app/SET_ALL_CONVERSATION', this.conversationList)
-        const saveLocalData = groupList.map(item => item.groupId._id)
-        saveMyGroupToLocalStorage(saveLocalData)
+          item.conversationType = conversationTypes.group;
+          item.isGroup = true;
+          item.roomid = item.groupId._id;
+        });
+        this.conversationList = groupList;
+        this.$store.dispatch("app/SET_ALL_CONVERSATION", this.conversationList);
+        const saveLocalData = groupList.map(item => item.groupId._id);
+        saveMyGroupToLocalStorage(saveLocalData);
       }
     },
     createGroup() {
-      this.$eventBus.$emit('toggleCreateGroup', { show: true })
+      this.$eventBus.$emit("toggleCreateGroup", { show: true });
     },
     changeCurrentConversation(item) {
-      this.$emit('setCurrentConversation', item)
+      this.$emit("setCurrentConversation", item);
     },
     joinChatRoom() {
       this.conversationList.forEach(item => {
-        this.$socket.emit("join", item)
-      })
+        this.$socket.emit("join", item);
+      });
     }
   },
   watch: {
     conversationList: {
       handler() {
-        this.joinChatRoom()
-      }, deep: true, immediate: true
-    },
+        this.joinChatRoom();
+      },
+      deep: true,
+      immediate: true
+    }
   },
   components: {
     conversationItem
   },
   created() {
-    this.getMyGroup()
-    this.$eventBus.$on('createGroupSuccess', () => {
-      this.getMyGroup()
-    })
-  },
-}
+    this.getMyGroup();
+    this.$eventBus.$on("createGroupSuccess", () => {
+      this.getMyGroup();
+    });
+  }
+};
 </script>
 
 <style lang="scss">
@@ -121,7 +125,7 @@ export default {
     bottom: 10px;
     right: 10px;
     font-size: 40px;
-    color: hsla(201, 100%, 55%, 1);
+    color: #21aa93;
     cursor: pointer;
   }
 }

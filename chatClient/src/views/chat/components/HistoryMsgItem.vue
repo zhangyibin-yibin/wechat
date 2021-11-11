@@ -6,13 +6,13 @@
     </div>
     <div class="history-msg-item__content primary-font">
       <img v-if="msgItem.messageType === 'img'" width="200" :src="msgItem.message" />
-      <span v-else>{{msgItem.message}}</span>
+      <span v-else>{{msgItem.message==""?(msgItem.messageType=='audio'?'语音聊天':'白板协作'):msgItem.message}}</span>
     </div>
   </div>
 </template>
 
 <script>
-import { formatDateToZH } from '@/utils'
+import { formatDateToZH } from "@/utils";
 export default {
   props: {
     msgItem: {
@@ -21,29 +21,32 @@ export default {
   },
   computed: {
     userInfo() {
-      return this.$store.state.user.userInfo
+      return this.$store.state.user.userInfo;
     },
-    friendBeizhu() { // 好友备注Map {id2: '备注1', id1: '备注2'}
-      return this.userInfo.friendBeizhu || {}
+    friendBeizhu() {
+      // 好友备注Map {id2: '备注1', id1: '备注2'}
+      return this.userInfo.friendBeizhu || {};
     },
     name() {
-      const msg = this.msgItem
-      const friendBeizhu = this.friendBeizhu
-      let res = ''
+      const msg = this.msgItem;
+      const friendBeizhu = this.friendBeizhu;
+      let res = "";
       if (msg.senderId === this.userInfo._id) {
-        res = '我'
+        res = "我";
       } else {
-        res = friendBeizhu[msg.senderId] ? friendBeizhu[msg.senderId] : msg.senderNickname
+        res = friendBeizhu[msg.senderId]
+          ? friendBeizhu[msg.senderId]
+          : msg.senderNickname;
       }
-      return res
+      return res;
     }
   },
   filters: {
     formatDateToZH(val) {
-      return formatDateToZH(val)
+      return formatDateToZH(val);
     }
   }
-}
+};
 </script>
 
 <style lang="scss">

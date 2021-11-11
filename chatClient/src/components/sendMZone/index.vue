@@ -52,16 +52,16 @@
 </template>
 
 <script>
-const PICTURE_LIMIT = 2
-import customEmoji from '@/components/customEmoji'
-import uploadImg from '@/components/customUploadImg'
-import pictureView from '@/components/customPictureView'
-import { fromatTime } from '@/utils'
-import { uploadImgStatusMap, qiniu_URL } from '@/const'
+const PICTURE_LIMIT = 2;
+import customEmoji from "@/components/customEmoji";
+import uploadImg from "@/components/customUploadImg";
+import pictureView from "@/components/customPictureView";
+import { fromatTime } from "@/utils";
+import { uploadImgStatusMap, qiniu_URL } from "@/const";
 export default {
   data() {
     return {
-      content: '',
+      content: "",
       // pictures: ['http://blog.static.chenr.cn/cc-messger-170240566a4-56.jpeg', 'http://blog.static.chenr.cn/cc-messger-1701041742e-71.jpeg', 'http://blog.static.chenr.cn/cc-messger-170240566a4-56.jpeg'],
       // pictures: [{url: '', guid: '', uploading: true, uploadPercent: 10}, ...],
       pictures: [],
@@ -69,37 +69,37 @@ export default {
       showEmoji: false,
       showUploadImg: false,
       pictureLimit: PICTURE_LIMIT,
-      token: '',
+      token: "",
       isPublishing: false
-    }
+    };
   },
   computed: {
     userInfo() {
-      return this.$store.state.user.userInfo
+      return this.$store.state.user.userInfo;
     }
   },
   methods: {
     async send() {
       if (!this.content) {
-        this.$message.error('说点什么吧？')
-        return
+        this.$message.error("说点什么吧？");
+        return;
       }
-      this.isPublishing = true
+      this.isPublishing = true;
       const data = {
         userId: this.userInfo._id,
         content: this.content,
         createDate: fromatTime(new Date()),
         pictures: this.pictures
-      }
-      const res = await this.$http.publishPyqNews(data)
-      const { status } = res.data
+      };
+      const res = await this.$http.publishPyqNews(data);
+      const { status } = res.data;
       if (status === 2000 && res.status < 400) {
         this.$message({
-          message: '发布成功！',
-          type: 'success'
-        })
-        console.log(res.data.data[0])
-        this.$emit('watchsend', {
+          message: "发布成功！",
+          type: "success"
+        });
+        console.log(res.data.data[0]);
+        this.$emit("watchsend", {
           ...res.data.data[0],
           userId: {
             _id: this.userInfo._id,
@@ -109,80 +109,84 @@ export default {
           },
           comments: [],
           likes: []
-        })
-        this.content = ""
-        this.pictures = []
-        this.showFotter = false
+        });
+        this.content = "";
+        this.pictures = [];
+        this.showFotter = false;
       }
-      this.isPublishing = false
+      this.isPublishing = false;
     },
     getPicLocalUrl(url, guid) {
-      console.log('getPicLocalUrl')
-      this.pictures = [...this.pictures, {url, guid, uploading: true}]
+      console.log("getPicLocalUrl");
+      this.pictures = [...this.pictures, { url, guid, uploading: true }];
     },
     getPictureStatus(res) {
-      console.log(res)
+      console.log(res);
       if (res.status === uploadImgStatusMap.error) {
-        this.$message.error('图片上传失败！')
-        return
+        this.$message.error("图片上传失败！");
+        return;
       }
       if (res.status === uploadImgStatusMap.next) {
-        const guid = res.guid
-        const percent = Number(Number((res.data && res.data.total && res.data.total.percent) || 0).toFixed(2))
-        const pictures = JSON.parse(JSON.stringify(this.pictures)) || []
+        const guid = res.guid;
+        const percent = Number(
+          Number(
+            (res.data && res.data.total && res.data.total.percent) || 0
+          ).toFixed(2)
+        );
+        const pictures = JSON.parse(JSON.stringify(this.pictures)) || [];
         pictures.forEach(item => {
           if (item.guid === guid) {
-            item.uploadPercent = percent
+            item.uploadPercent = percent;
           }
-        })
-        this.pictures = pictures
+        });
+        this.pictures = pictures;
       }
       if (res.status === uploadImgStatusMap.complete) {
-        const IMG_URL = qiniu_URL + res.data.key
-        const guid = res.guid
-        const pictures = JSON.parse(JSON.stringify(this.pictures)) || []
+        const IMG_URL = qiniu_URL + res.data.key;
+        const guid = res.guid;
+        const pictures = JSON.parse(JSON.stringify(this.pictures)) || [];
         pictures.forEach(item => {
           if (item.guid === guid) {
-            item.url = IMG_URL
-            delete item.uploading
-            delete item.uploadPercent
+            item.url = IMG_URL;
+            delete item.uploading;
+            delete item.uploadPercent;
           }
-        })
-        this.pictures = pictures
+        });
+        this.pictures = pictures;
       }
     },
     cancel() {
-      this.showFotter = false
-      this.content = ''
-      this.pictures = []
+      this.showFotter = false;
+      this.content = "";
+      this.pictures = [];
     },
     deletePictureItem(index) {
-      this.pictures.splice(index, 1)
+      this.pictures.splice(index, 1);
     },
     deletePictures() {
-      this.pictures = []
+      this.pictures = [];
     },
     addEmoji(item) {
-      this.content += item
+      this.content += item;
     },
     handlerShowEmoji() {
-      this.showEmoji = !this.showEmoji
-      this.showUploadImg = false
+      this.showEmoji = !this.showEmoji;
+      this.showUploadImg = false;
     },
     handleShowUplodImg() {
       if (this.pictures.length >= 2) {
         this.$message({
           message: `最多只能上传${this.pictureLimit}张图片哟~`,
-          type: 'warning'
+          type: "warning"
         });
       } else {
-        this.showUploadImg = !this.showUploadImg
+        this.showUploadImg = !this.showUploadImg;
       }
-      this.showEmoji = false
+      this.showEmoji = false;
     },
     documentHandlerClick() {
-      this.showEmoji = false
-      this.showUploadImg = false
+      this.showEmoji = false;
+      this.showUploadImg = false;
     }
   },
   components: {
@@ -191,24 +195,27 @@ export default {
     pictureView
   },
   created() {
-    document.addEventListener('click', this.documentHandlerClick)
+    document.addEventListener("click", this.documentHandlerClick);
     this.$http.getQiniuToken().then(res => {
-      const { data } = res
-      this.token = data.data
-    })
-  },
-}
+      const { data } = res;
+      this.token = data.data;
+    });
+  }
+};
 </script>
 
 <style lang="scss">
-@import './../../../static/css/animation.scss';
+@import "./../../../static/css/animation.scss";
+.mzone-page .mzone-wrapper .mzone-body .content {
+  margin-left: 0 !important;
+}
 .send-mzone-com {
   position: relative;
   background-color: #fff;
   margin-bottom: 10px;
   .header {
     display: flex;
-    border-bottom: 1px solid #C0C4CC;
+    border-bottom: 1px solid #c0c4cc;
     align-items: center;
     height: 60px;
     .send-content {
@@ -244,7 +251,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: all .5s ease;
+    transition: all 0.5s ease;
     .poster-attach {
       .item {
         cursor: pointer;
@@ -265,4 +272,3 @@ export default {
   }
 }
 </style>
-
